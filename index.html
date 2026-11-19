@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calendrier fantôme · Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Prototype: real competitor Instagram posts via Meta's official Business Discovery API. Light theme, Agorapulse palette. */
+:root{
+  --bg:#F9F9FA;--surface:#FFFFFF;--sunken:#F5F5F7;--ink:#212E44;--ink-2:#5D6A82;--ink-3:#858FA1;--line:#EAECEF;--line-2:#D6DAE0;
+  --accent:#FF6726;--accent-ink:#C83E07;--accent-soft:#FFEFE9;--blue:#0E72D6;--blue-soft:#E8F4FF;--green:#0F821D;--green-soft:#ECF7ED;
+  --red:#D80505;--red-soft:#FDE7E7;--mermaid:#7A4DE0;--mermaid-soft:#F5F1FF;--heat:255,103,38;
+  --font:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--r:10px;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;margin:0}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}p{margin:0}
+a{color:var(--blue)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink)}
+.lead{color:var(--ink-2);max-width:72ch;font-size:15px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.muted{color:var(--ink-2)}.small{font-size:12.5px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.btn{border:1px solid var(--line-2);background:var(--surface);border-radius:8px;padding:7px 14px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--sunken)}.btn:disabled{opacity:.5;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.sm{padding:4px 10px;font-size:13px}.btn.ghost{border-color:transparent;background:none;color:var(--ink-2)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.c-ded{background:var(--blue-soft);color:var(--blue)}.c-ok{background:var(--green-soft);color:var(--green)}.c-ko{background:var(--red-soft);color:var(--red)}
+.c-grey{background:var(--sunken);color:var(--ink-3)}.c-demo{background:var(--mermaid-soft);color:var(--mermaid)}.c-hot{background:var(--red-soft);color:var(--red)}
+.input{border:1px solid var(--line-2);border-radius:8px;padding:7px 10px;background:var(--surface);min-width:0}
+details{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--sunken)}
+summary{cursor:pointer;font-weight:600}
+ol.steps{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+code{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:0 4px;font-size:12px}
+.comps{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.comp{border:1.5px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.comp.ok{border-color:var(--green)}.comp.ded{border-color:var(--blue)}
+.who{display:flex;gap:10px;align-items:center;min-width:0}
+.who img,.who .ph{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--sunken);flex:none;display:grid;place-items:center;font-weight:800;color:var(--ink-3)}
+.who b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who span{font-size:12px;color:var(--ink-3)}
+.cal{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+.grid{display:grid;grid-template-columns:140px repeat(7,minmax(104px,1fr));min-width:870px}
+.h{padding:8px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.lane{position:sticky;left:0;z-index:1;background:var(--surface);border-top:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0}
+.lane b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lane.gh{background:var(--sunken)}
+.cell{border-top:1px solid var(--line);border-left:1px solid var(--line);padding:6px;min-height:80px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cell.gh{background:var(--sunken)}
+.ev{border-radius:6px;padding:4px 6px;font-size:11.5px;line-height:1.3;text-align:left;border:1px solid var(--line-2);width:100%;background:var(--surface);overflow:hidden}
+.ev b{font-size:10.5px;color:var(--ink-3);display:block}
+.ev.prob{background:transparent;border:1.5px dashed var(--ink-3)}
+.ev.mine{border-color:var(--accent);background:var(--accent-soft)}
+.ev.warn{box-shadow:0 0 0 2px var(--red)}
+.ev[aria-pressed="true"]{outline:2px solid var(--blue);outline-offset:1px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:12px;border-radius:3px;border:1.5px solid}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:8px;padding:2px;background:var(--surface)}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:6px;font-weight:600;font-size:13px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.heat{display:grid;grid-template-columns:44px repeat(24,minmax(12px,1fr));gap:2px;font-size:10.5px;color:var(--ink-3);min-width:520px}
+.heat i{aspect-ratio:1;border-radius:3px;display:block}
+.rh{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none;font-size:13px}
+.rh li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.ico{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-weight:800;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:11.5px;color:var(--ink-3);font-weight:700;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:6px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:top}
+td.n,th.n{text-align:right}
+.bar{display:inline-block;height:6px;border-radius:3px;background:rgba(var(--heat),.6);vertical-align:middle;margin-right:6px}
+.tops{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.top{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.top .cap{overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.state{padding:12px 14px;border-radius:8px;background:var(--sunken);color:var(--ink-2);font-size:13px}
+.state.err{background:var(--red-soft);color:var(--ink)}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:8px;font-size:13px}
+.detail{border-left:3px solid var(--blue);padding-left:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="eyebrow">Prototype fonctionnel · Instagram · API officielle Meta</div>
+    <h1 style="font-size:26px">Calendrier fantôme Instagram</h1>
+    <p class="lead">Les vrais posts Instagram de vos concurrents, lus avec l’API Business Discovery de Meta : leur rythme, leurs formats, leurs hashtags, et ce qu’ils vont probablement publier la semaine prochaine.</p>
+  </div>
+
+  <div class="card" id="connect"></div>
+  <div class="card" id="compsCard" hidden></div>
+  <div id="results" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div class="card" id="calCard"></div>
+    <div class="card" id="detailCard" hidden></div>
+    <div class="card" id="rhCard"></div>
+    <div class="two"><div class="card" id="heatCard"></div><div class="card" id="tagCard"></div></div>
+    <div class="card" id="topCard"></div>
+  </div>
+  <p class="small muted">Prototype. Le jeton reste dans cet onglet (sessionStorage) et n’est envoyé qu’à graph.facebook.com. Rien n’est stocké ailleurs.</p>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const GRAPH="https://graph.facebook.com/";
+const WD=["dim.","lun.","mar.","mer.","jeu.","ven.","sam."],WDL=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const FMT={REELS:"Reel",CAROUSEL_ALBUM:"Carrousel",IMAGE:"Photo",VIDEO:"Vidéo",FEED:"Post",STORY:"Story"};
+const fmtOf=m=>m.media_product_type==="REELS"?"Reel":FMT[m.media_type]||m.media_type||"Post";
+const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?sessionStorage.removeItem(k):sessionStorage.setItem(k,v)}catch(e){}}};
+const today=new Date();today.setHours(0,0,0,0);
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const lbl=d=>d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+const nf=n=>n==null?"–":Number(n).toLocaleString("fr-FR");
+
+/* ---- inputs: competitor names come from Agorapulse (URL), never typed by default ---- */
+const Q=new URLSearchParams(location.search);
+const FROM_AP=(Q.get("c")||"").split(",").map(s=>s.trim()).filter(Boolean);
+const BRAND=Q.get("brand")||"";
+const S={mode:null,token:ss.get("ig_token"),me:null,comps:[],week:1,sel:null,err:null};
+
+/* ---------- Graph API ---------- */
+async function g(path,params){
+  const u=new URL(GRAPH+path);Object.entries(params||{}).forEach(([k,v])=>u.searchParams.set(k,v));
+  u.searchParams.set("access_token",S.token); /* request URL only, never displayed, logged or stored */
+  const r=await fetch(u.toString());
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok||j.error){const e=new Error(j.error?.message||("HTTP "+r.status));e.code=j.error?.code;e.sub=j.error?.error_subcode;throw e}
+  return j;
+}
+function errMsg(e){
+  if(e.code===190)return "Le jeton a expiré ou n’est pas valide. Générez-en un nouveau.";
+  if(e.code===10||e.code===200)return "Permission manquante sur le jeton. Vérifiez les permissions listées dans le guide.";
+  if(e.code===4||e.code===17||e.code===32||e.code===613)return "Limite d’appels Meta atteinte. Réessayez dans une heure.";
+  if(e.message==="Failed to fetch")return "Impossible de joindre l’API Meta depuis ce navigateur.";
+  return "Erreur Meta : "+esc(e.message);
+}
+const MEDIA_FIELDS="caption,timestamp,media_type,media_product_type,like_count,comments_count,permalink";
+const BD=u=>`business_discovery.username(${u}){username,name,biography,website,profile_picture_url,followers_count,media_count,media.limit(60){${MEDIA_FIELDS}}}`;
+async function discover(u){const j=await g(S.me.id,{fields:BD(u)});return j.business_discovery}
+
+/* resolve a brand name to an Instagram handle: candidates checked against the API, best match kept */
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/&/g,"and");
+function candidates(name){
+  const w=norm(name).split(/[^a-z0-9]+/).filter(Boolean),j=w.join("");
+  return [...new Set([j,w.join("."),w.join("_"),j+"app",j+"hq",j+"official","get"+j,w[0]].filter(x=>x&&x.length>2))].slice(0,7);
+}
+function score(name,acc){
+  const a=norm(name).replace(/[^a-z0-9]/g,""),b=norm(acc.name||"").replace(/[^a-z0-9]/g,""),u=norm(acc.username).replace(/[^a-z0-9]/g,"");
+  let s=0;if(b===a)s+=3;else if(b.includes(a)||a.includes(b))s+=2;if(u.includes(a))s+=2;if(acc.website&&norm(acc.website).includes(a.slice(0,6)))s+=2;s+=Math.min(2,Math.log10((acc.followers_count||1))/3);return s;
+}
+async function resolve(c){
+  c.status="searching";renderComps();
+  let best=null;
+  for(const u of candidates(c.name)){
+    try{const acc=await discover(u);const sc=score(c.name,acc);if(!best||sc>best.sc)best={acc,sc,u};if(sc>=6)break}
+    catch(e){if(e.code===190||e.code===10||e.code===200||e.code===4||e.code===17||e.code===32){c.status="error";c.err=errMsg(e);renderComps();return}}
+  }
+  if(best&&best.sc>=3){c.acc=best.acc;c.handle=best.acc.username;c.status="deduced"}else{c.status="notfound"}
+  renderComps();
+}
+async function loadHandle(c,u){
+  c.status="searching";renderComps();
+  try{c.acc=await discover(u.replace(/^@/,""));c.handle=c.acc.username;c.status="confirmed"}catch(e){c.status="notfound";c.err=e.code===110||e.code===100?"Compte introuvable ou pas en mode pro.":errMsg(e)}
+  renderComps();analyse();
+}
+
+/* ---------- connect ---------- */
+async function connectReal(){
+  const t=$("#tok").value.trim();if(!t)return;S.token=t;ss.set("ig_token",t);await startReal();
+}
+async function startReal(){
+  S.mode="real";S.err=null;renderConnect("Connexion à Meta…");
+  try{
+    const j=await g("me/accounts",{fields:"name,instagram_business_account{id,username,name,profile_picture_url}",limit:"50"});
+    const ig=(j.data||[]).map(p=>p.instagram_business_account).filter(Boolean);
+    if(!ig.length)throw Object.assign(new Error("Aucun compte Instagram pro relié à vos pages Facebook."),{code:"noig"});
+    S.me={id:ig[0].id,username:ig[0].username,name:ig[0].name,pic:ig[0].profile_picture_url,all:ig};
+    try{const mine=await discover(S.me.username);S.me.acc=mine}catch(e){}
+    renderConnect();
+    S.comps=FROM_AP.map(n=>({name:n,status:"pending",src:"Listening Agorapulse"}));
+    renderComps();
+    for(const c of S.comps)await resolve(c);
+    analyse();
+  }catch(e){S.mode=null;S.err=e.code==="noig"?e.message:errMsg(e);if(e.code===190){S.token=null;ss.set("ig_token",null)}renderConnect()}
+}
+function startDemo(){S.mode="demo";S.me=DEMO.me;S.comps=DEMO.comps.map(c=>({...c}));renderConnect();renderComps();analyse()}
+function disconnect(){S.token=null;ss.set("ig_token",null);S.mode=null;S.me=null;S.comps=[];$("#results").hidden=true;$("#compsCard").hidden=true;renderConnect()}
+function renderConnect(loading){
+  const c=$("#connect");
+  if(S.mode==="real"&&S.me&&!loading){c.innerHTML=`<div class="row between"><div class="who">${S.me.pic?`<img src="${esc(S.me.pic)}" alt="">`:`<span class="ph">${esc(S.me.username[0])}</span>`}<div><b>@${esc(S.me.username)}</b><span>Votre compte Instagram pro, utilisé pour interroger l’API</span></div></div><div class="row"><span class="chip c-ok">Connecté à Meta</span><button class="btn sm ghost" data-act="disconnect">Déconnecter</button></div></div>`;return}
+  if(S.mode==="demo"){c.innerHTML=`<div class="row between"><div class="row"><span class="chip c-demo">Mode démo</span><span class="small muted">Marques et posts fictifs. Pour vos vraies données, connectez un compte Instagram pro.</span></div><button class="btn sm" data-act="exitdemo">Quitter la démo</button></div>`;return}
+  c.innerHTML=`
+  <div class="row between"><h2 style="font-size:17px">Connexion à l’API Instagram</h2>${FROM_AP.length?`<span class="chip c-ded">${FROM_AP.length} concurrent${FROM_AP.length>1?"s":""} reçu${FROM_AP.length>1?"s":""} d’Agorapulse</span>`:""}</div>
+  ${loading?`<div class="state">${esc(loading)}</div>`:""}
+  ${S.err?`<div class="state err">${esc(S.err)}</div>`:""}
+  <p class="small muted">Dans Agorapulse, cette étape n’existerait pas : votre compte Instagram est déjà connecté. Ici, le prototype a besoin d’un jeton Meta temporaire.</p>
+  <div class="row"><input class="input" id="tok" type="password" placeholder="Collez votre jeton d’accès Meta" style="flex:1 1 320px" autocomplete="off"><button class="btn primary" data-act="connect">Connecter</button><button class="btn" data-act="demo">Voir la démo</button></div>
+  <details><summary>Obtenir un jeton en 10 minutes</summary><ol class="steps">
+    <li>Il faut un compte Instagram <b>pro ou créateur</b> relié à une page Facebook dont vous êtes admin.</li>
+    <li>Sur <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener">developers.facebook.com/apps</a>, créez une app de type Business. Laissez-la en mode développement.</li>
+    <li>Ouvrez l’<a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener">explorateur de l’API Graph</a>, choisissez votre app, puis « Get User Access Token ».</li>
+    <li>Cochez <code>instagram_basic</code>, <code>pages_show_list</code>, <code>pages_read_engagement</code> et, si vos pages sont dans un Business Manager, <code>business_management</code>.</li>
+    <li>Générez le jeton, copiez-le, collez-le ici. Il expire au bout d’une à deux heures.</li>
+  </ol></details>`;
+}
+
+/* ---------- competitors (deduced, confirm in one click) ---------- */
+function renderComps(){
+  const c=$("#compsCard");c.hidden=!S.mode;if(!S.mode)return;
+  const list=S.comps.map((x,i)=>{
+    const acc=x.acc,st=x.status;
+    const head=acc?`<div class="who">${acc.profile_picture_url&&!acc.profile_picture_url.startsWith("demo:")?`<img src="${esc(acc.profile_picture_url)}" alt="">`:`<span class="ph">${esc((acc.name||x.name)[0])}</span>`}<div><b>${esc(acc.name||x.name)}</b><span>@${esc(acc.username)} · ${nf(acc.followers_count)} abonnés · ${nf(acc.media_count)} posts</span></div></div>`:`<div class="who"><span class="ph">${esc(x.name[0])}</span><div><b>${esc(x.name)}</b><span>${esc(x.src||"")}</span></div></div>`;
+    const chip=st==="confirmed"?`<span class="chip c-ok">Confirmé</span>`:st==="deduced"?`<span class="chip c-ded">Déduit, à confirmer</span>`:st==="searching"?`<span class="chip c-grey">Recherche du compte…</span>`:st==="notfound"?`<span class="chip c-ko">Compte pro introuvable</span>`:st==="error"?`<span class="chip c-ko">Erreur</span>`:`<span class="chip c-grey">En attente</span>`;
+    const actions=st==="deduced"?`<div class="row"><button class="btn sm primary" data-confirm="${i}">C’est bien eux</button><button class="btn sm" data-fix="${i}">Corriger</button></div>`:
+      (st==="notfound"||x.fixing)?`<div class="row"><input class="input" id="fix-${i}" placeholder="@identifiant Instagram" style="flex:1"><button class="btn sm" data-setfix="${i}">Vérifier</button></div>${x.err?`<span class="small muted">${esc(x.err)}</span>`:`<span class="small muted">On a essayé ${candidates(x.name).map(u=>"@"+u).join(", ")}.</span>`}`:
+      st==="error"?`<span class="small muted">${esc(x.err)}</span>`:"";
+    return `<div class="comp ${st==="confirmed"?"ok":st==="deduced"?"ded":""}"><div class="row between">${chip}<span class="small muted">${esc(x.src||"")}</span></div>${head}${actions}</div>`}).join("");
+  c.innerHTML=`<div class="row between"><h2 style="font-size:17px">Vos concurrents sur Instagram</h2><span class="small muted">${S.mode==="demo"?"Venus de la recherche Listening (démo)":FROM_AP.length?"Venus de votre recherche Listening Agorapulse":"Aucun concurrent reçu"}</span></div>
+    ${S.comps.length?`<div class="comps">${list}</div>`:`<div class="state">Ouvrez ce prototype depuis le calendrier fantôme Agorapulse pour recevoir vos concurrents automatiquement. En attendant, ajoutez-en un ci-dessous.</div>`}
+    <div class="row"><input class="input" id="addName" placeholder="Ajouter un concurrent (nom de marque)" style="flex:1 1 260px"><button class="btn sm" data-act="add">Ajouter</button></div>`;
+}
+
+/* ---------- analysis ---------- */
+const STOP=new Set("pour avec dans plus vous nous votre vos notre nos cette ces sont mais tout tous elle elles leur leurs être avoir fait faire comme quand très bien aussi alors encore ici chez sans sous entre that this with from your have will what about just more they their them were been into than then when which there https www com the and for you are our not all can out new get now how why who".split(" "));
+function analyseAcc(acc){
+  const M=(acc.media?.data||[]).map(m=>({...m,dt:new Date(m.timestamp),fmt:fmtOf(m),eng:(m.like_count||0)+(m.comments_count||0)}));
+  if(!M.length)return{M,empty:true};
+  const oldest=M[M.length-1].dt,spanDays=Math.max(7,(Date.now()-oldest)/864e5),weeks=spanDays/7;
+  const byWd=Array(7).fill(0),byH=Array(24).fill(0),heat=[...Array(7)].map(()=>Array(24).fill(0)),fm={},tags={},words={},wdHours=[...Array(7)].map(()=>[]);
+  const wkSeen=[...Array(7)].map(()=>new Set());
+  M.forEach(m=>{const d=m.dt.getDay(),h=m.dt.getHours();byWd[d]++;byH[h]++;heat[d][h]++;wdHours[d].push(h+m.dt.getMinutes()/60);
+    wkSeen[d].add(Math.floor((Date.now()-m.dt)/(7*864e5)));fm[m.fmt]=(fm[m.fmt]||0)+1;
+    const cap=m.caption||"";(cap.match(/#[\p{L}\p{N}_]+/gu)||[]).forEach(t=>{t=t.toLowerCase();tags[t]=tags[t]||{n:0,eng:0};tags[t].n++;tags[t].eng+=m.eng});
+    cap.replace(/#[\p{L}\p{N}_]+/gu," ").replace(/https?:\S+/g," ").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(w=>w.length>3&&!STOP.has(w)&&!/^\d+$/.test(w)).forEach(w=>{words[w]=(words[w]||0)+1})});
+  const med=a=>{const s=[...a].sort((x,y)=>x-y);return s.length?s[Math.floor(s.length/2)]:null};
+  const wTotal=Math.max(1,Math.round(weeks));
+  const pattern=byWd.map((n,d)=>({d,n,share:wkSeen[d].size/wTotal,hour:med(wdHours[d])})).filter(x=>x.n>0);
+  const avgEng=M.reduce((a,m)=>a+m.eng,0)/M.length;
+  const engRate=acc.followers_count?avgEng/acc.followers_count*100:null;
+  const fmtStats=Object.entries(fm).map(([k,n])=>({k,n,eng:M.filter(m=>m.fmt===k).reduce((a,m)=>a+m.eng,0)/n})).sort((a,b)=>b.n-a.n);
+  return{M,perWeek:M.length/weeks,weeks,byWd,byH,heat,pattern,fmtStats,avgEng,engRate,
+    tags:Object.entries(tags).map(([k,v])=>({k,n:v.n,eng:v.eng/v.n})).sort((a,b)=>b.n-a.n),
+    words:Object.entries(words).sort((a,b)=>b[1]-a[1]).slice(0,15),
+    top:[...M].sort((a,b)=>b.eng-a.eng).slice(0,3)};
+}
+const ready=()=>S.comps.filter(c=>c.acc&&(c.status==="confirmed"||c.status==="deduced"));
+function analyse(){
+  ready().forEach(c=>{c.A=c.A||analyseAcc(c.acc)});
+  if(S.me&&S.me.acc&&!S.me.A)S.me.A=analyseAcc(S.me.acc);
+  $("#results").hidden=!ready().length;if(!ready().length)return;
+  renderCal();renderRhythm();renderHeat();renderTags();renderTops();
+}
+const hm=h=>h==null?"":String(Math.floor(h)).padStart(2,"0")+":"+String(Math.round((h%1)*60/15)*15%60).padStart(2,"0");
+function probable(c,d){const p=c.A.pattern.find(x=>x.d===d.getDay()&&x.share>=0.4);return p?{t:hm(p.hour),h:p.hour,share:p.share,fmt:c.A.fmtStats[0]?.k}:null}
+
+/* ---------- calendar ---------- */
+function postsOn(A,d){return A?A.M.filter(m=>key(m.dt)===key(d)):[]}
+function conflictsFor(d){
+  if(!S.me||!S.me.A)return[];const out=[];
+  ready().forEach(c=>{const p=probable(c,d);if(!p)return;
+    S.me.A.pattern.forEach(x=>{if(x.d===d.getDay()&&x.share>=0.4&&Math.abs(x.hour-p.h)<=2)out.push({c,p,mine:x})})});return out;
+}
+function renderCal(){
+  const ds=[...Array(7)].map((_,i)=>S.week===0?addD(today,i-6):addD(today,i+1));
+  const R=ready();
+  let g=`<div class="h" style="position:sticky;left:0;background:var(--surface);z-index:1"></div>`+ds.map(d=>`<div class="h">${lbl(d)}</div>`).join("");
+  if(S.me&&S.me.A){g+=`<div class="lane"><b>@${esc(S.me.username)}</b><span class="small muted">Vous</span></div>`+ds.map(d=>{
+    if(S.week===0)return `<div class="cell">${postsOn(S.me.A,d).map(m=>`<button class="ev mine" data-post="me|${esc(m.permalink||m.timestamp)}"><b>${hm(m.dt.getHours()+m.dt.getMinutes()/60)} · ${esc(m.fmt)}</b>${esc((m.caption||"").slice(0,60))}</button>`).join("")}</div>`;
+    const mineP=S.me.A.pattern.find(x=>x.d===d.getDay()&&x.share>=0.4),warn=conflictsFor(d).length;
+    return `<div class="cell">${mineP?`<span class="ev mine ${warn?"warn":""}"><b>${hm(mineP.hour)} · votre habitude</b>${Math.round(mineP.share*100)} % des ${WDL[d.getDay()]}s</span>`:""}</div>`}).join("")}
+  R.forEach((c,ci)=>{g+=`<div class="lane gh"><b>${esc(c.acc.name||c.name)}</b><span class="small muted">@${esc(c.handle)}${c.status==="deduced"?" · à confirmer":""}</span></div>`+ds.map(d=>{
+    if(S.week===0)return `<div class="cell gh">${postsOn(c.A,d).map(m=>{const id=ci+"|"+(m.permalink||m.timestamp);return `<button class="ev" data-post="${esc(id)}" aria-pressed="${S.sel===id}"><b>${hm(m.dt.getHours()+m.dt.getMinutes()/60)} · ${esc(m.fmt)} · ${nf(m.eng)} interactions</b>${esc((m.caption||"(sans légende)").slice(0,60))}</button>`}).join("")}</div>`;
+    const p=probable(c,d),w=p&&conflictsFor(d).some(x=>x.c===c);
+    return `<div class="cell gh">${p?`<button class="ev prob ${w?"warn":""}" data-prob="${ci}|${key(d)}" aria-pressed="${S.sel===ci+"|"+key(d)}"><b>${p.t} · probable</b>${esc(p.fmt||"Post")} · ${Math.round(p.share*100)} % des ${WDL[d.getDay()]}s</button>`:""}</div>`}).join("")});
+  $("#calCard").innerHTML=`<div class="row between"><div class="seg" role="group" aria-label="Période"><button data-week="0" aria-pressed="${S.week===0}">7 derniers jours (réels)</button><button data-week="1" aria-pressed="${S.week===1}">7 prochains jours (prévus)</button></div>
+    <span class="small muted">${S.week===0?"Posts réellement publiés, lus via l’API Meta.":"Prévision à partir de leurs habitudes sur les 60 derniers posts."}</span></div>
+    <div class="cal"><div class="grid">${g}</div></div>
+    <div class="legend"><span><i style="border-color:var(--line-2)"></i>Post concurrent publié</span><span><i style="border-color:var(--ink-3);border-style:dashed"></i>Post concurrent probable</span><span><i style="border-color:var(--accent);background:var(--accent-soft)"></i>Vous</span><span><i style="border-color:var(--red);box-shadow:0 0 0 1px var(--red)"></i>Même créneau, à moins de 2 h</span></div>`;
+}
+function showPost(id){
+  const [ci,pl]=id.split("|");const c=ci==="me"?{acc:S.me.acc,A:S.me.A,name:"Vous"}:ready()[+ci];const m=c.A.M.find(x=>(x.permalink||x.timestamp)===pl);if(!m)return;
+  const d=$("#detailCard");d.hidden=false;
+  d.innerHTML=`<div class="row between"><h3 style="font-size:15px">${esc(c.acc.name||c.name)} · ${lbl(m.dt)} à ${hm(m.dt.getHours()+m.dt.getMinutes()/60)}</h3><button class="btn sm" data-act="close">Fermer</button></div>
+   <div class="detail"><div class="row small muted">${esc(m.fmt)} · ${nf(m.like_count)} j’aime · ${nf(m.comments_count)} commentaires${c.acc.followers_count?` · ${(m.eng/c.acc.followers_count*100).toFixed(2).replace(".",",")} % d’engagement`:""}</div>
+   <p style="white-space:pre-line;margin-top:6px">${esc(m.caption||"(sans légende)")}</p>${m.permalink&&!m.permalink.startsWith("demo:")?`<p style="margin-top:6px"><a href="${esc(m.permalink)}" target="_blank" rel="noopener">Voir sur Instagram</a></p>`:""}</div>`;
+}
+function showProb(id){
+  const [ci,k]=id.split("|"),c=ready()[+ci],d=new Date(k+"T12:00:00"),p=probable(c,d),same=c.A.M.filter(m=>m.dt.getDay()===d.getDay()).slice(0,3);
+  const box=$("#detailCard");box.hidden=false;
+  box.innerHTML=`<div class="row between"><h3 style="font-size:15px">${esc(c.acc.name||c.name)} · ${lbl(d)} vers ${p.t}</h3><div class="row"><span class="chip c-grey">Probable</span><button class="btn sm" data-act="close">Fermer</button></div></div>
+   <div class="detail"><p>Ils ont publié un ${WDL[d.getDay()]} ${Math.round(p.share*100)} % des semaines observées, en général vers ${p.t}. Format le plus fréquent : ${esc(p.fmt||"Post")}.</p>
+   <p class="small muted" style="margin-top:6px">Leurs derniers posts du ${WDL[d.getDay()]} :</p><ul class="rh" style="margin-top:6px">${same.map(m=>`<li><span class="ico" style="background:var(--sunken)">${esc(m.fmt[0])}</span><span>${lbl(m.dt)} à ${hm(m.dt.getHours()+m.dt.getMinutes()/60)} · ${esc((m.caption||"").slice(0,90))}</span></li>`).join("")}</ul></div>`;
+}
+
+/* ---------- rhythm, conflicts, free days ---------- */
+function renderRhythm(){
+  const R=ready(),next=[...Array(7)].map((_,i)=>addD(today,i+1));
+  const free=next.filter(d=>!R.some(c=>probable(c,d))),C=next.flatMap(d=>conflictsFor(d).map(x=>({...x,d})));
+  $("#rhCard").innerHTML=`<div class="row between"><h3 style="font-size:15px">Ce que leurs posts révèlent</h3><span class="chip ${S.mode==="demo"?"c-demo":"c-ok"}">${S.mode==="demo"?"Données fictives":"Données réelles"}</span></div>
+  <ul class="rh">${R.map(c=>{const A=c.A;if(A.empty)return `<li><span class="ico" style="background:var(--sunken)">${esc(c.name[0])}</span><span><b>${esc(c.acc.name||c.name)}</b> n’a aucun post lisible.</span></li>`;
+    const days=A.pattern.filter(x=>x.share>=0.4).sort((a,b)=>b.share-a.share);
+    return `<li><span class="ico" style="background:var(--sunken);color:var(--ink-2)">${esc((c.acc.name||c.name)[0])}</span><span><b>${esc(c.acc.name||c.name)}</b> publie ${A.perWeek.toFixed(1).replace(".",",")} fois par semaine${days.length?`, surtout le ${days.map(x=>WD[x.d]+" vers "+hm(x.hour)).join(", ")}`:", sans jour fixe"}. Format favori : ${esc(A.fmtStats[0]?.k)} (${Math.round(A.fmtStats[0]?.n/A.M.length*100)} %).${A.engRate!=null?` Engagement moyen : ${A.engRate.toFixed(2).replace(".",",")} %.`:""}${A.fmtStats.length>1?` Leur format le plus engageant : ${esc([...A.fmtStats].sort((a,b)=>b.eng-a.eng)[0].k)}.`:""}</span></li>`}).join("")}</ul>
+  <ul class="rh">${S.me&&S.me.A?(C.length?C.map(x=>`<li><span class="ico" style="background:var(--red-soft);color:var(--red)">!</span><span><b>${lbl(x.d)} : vous publiez d’habitude vers ${hm(x.mine.hour)}, ${esc(x.c.acc.name||x.c.name)} vers ${x.p.t}.</b> <span class="muted">Décalez d’au moins 2 h pour ne pas arriver dans le même fil.</span></span></li>`).join(""):`<li><span class="ico" style="background:var(--green-soft);color:var(--green)">✓</span><span>Vos créneaux habituels ne tombent sur aucun créneau concurrent.</span></li>`):""}
+  ${free.length?`<li><span class="ico" style="background:var(--green-soft);color:var(--green)">○</span><span><b>Aucun concurrent ne publie d’habitude le ${free.map(lbl).join(", ")}.</b> <span class="muted">Créneaux libres.</span></span></li>`:""}</ul>`;
+}
+function renderHeat(){
+  const R=ready(),H=[...Array(7)].map(()=>Array(24).fill(0));R.forEach(c=>c.A.heat&&c.A.heat.forEach((r,d)=>r.forEach((n,h)=>H[d][h]+=n)));
+  const max=Math.max(1,...H.flat()),order=[1,2,3,4,5,6,0];
+  $("#heatCard").innerHTML=`<h3 style="font-size:15px">Quand ils publient</h3><p class="small muted">Tous concurrents confondus, heure locale.</p>
+  <div style="overflow-x:auto"><div class="heat"><span></span>${[...Array(24)].map((_,h)=>`<span style="text-align:center">${h%3===0?h:""}</span>`).join("")}
+  ${order.map(d=>`<span>${WD[d]}</span>${H[d].map((n,h)=>`<i title="${WDL[d]} ${h} h : ${n} post${n>1?"s":""}" style="background:${n?`rgba(var(--heat),${(0.12+0.88*n/max).toFixed(2)})`:"var(--sunken)"}"></i>`).join("")}`).join("")}</div></div>`;
+}
+function renderTags(){
+  const R=ready(),m={};R.forEach(c=>(c.A.tags||[]).slice(0,25).forEach(t=>{m[t.k]=m[t.k]||{};m[t.k][c.acc.name||c.name]=t}));
+  const rows=Object.entries(m).map(([k,v])=>({k,v,n:Object.keys(v).length,t:Object.values(v).reduce((a,x)=>a+x.n,0),eng:Object.values(v).reduce((a,x)=>a+x.eng,0)/Object.keys(v).length})).sort((a,b)=>b.n-a.n||b.t-a.t).slice(0,14);
+  const max=Math.max(1,...rows.map(r=>r.t)),names=R.map(c=>c.acc.name||c.name);
+  const words=R.map(c=>`<p class="small"><b>${esc(c.acc.name||c.name)}</b> <span class="muted">${(c.A.words||[]).slice(0,10).map(w=>esc(w[0])).join(" · ")||"–"}</span></p>`).join("");
+  $("#tagCard").innerHTML=`<h3 style="font-size:15px">Hashtags et mots-clés</h3>
+  ${rows.length?`<div style="overflow-x:auto"><table><thead><tr><th>Hashtag</th>${names.map(n=>`<th class="n">${esc(n)}</th>`).join("")}<th class="n">Interactions moy.</th><th></th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td><span class="bar" style="width:${Math.round(4+36*r.t/max)}px"></span>${esc(r.k)}</td>${names.map(n=>`<td class="n">${r.v[n]?r.v[n].n:"–"}</td>`).join("")}<td class="n">${nf(Math.round(r.eng))}</td><td>${r.n>=2?`<span class="chip c-hot">Partagé</span>`:""}</td></tr>`).join("")}</tbody></table></div>`:`<div class="state">Aucun hashtag dans leurs légendes.</div>`}
+  <p class="small muted">Mots les plus utilisés dans leurs légendes :</p>${words}`;
+}
+function renderTops(){
+  const R=ready();
+  $("#topCard").innerHTML=`<h3 style="font-size:15px">Leurs posts qui marchent le mieux</h3><div class="tops">${R.flatMap((c,ci)=>(c.A.top||[]).map(m=>`<div class="top"><div class="row between"><b>${esc(c.acc.name||c.name)}</b><span class="chip c-grey">${esc(m.fmt)}</span></div><span class="small muted">${lbl(m.dt)} · ${nf(m.like_count)} j’aime · ${nf(m.comments_count)} commentaires</span><span class="cap">${esc(m.caption||"(sans légende)")}</span>${m.permalink&&!m.permalink.startsWith("demo:")?`<a class="small" href="${esc(m.permalink)}" target="_blank" rel="noopener">Voir sur Instagram</a>`:""}</div>`)).join("")}</div>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;const a=t.dataset.act;
+  if(a==="connect")return connectReal();
+  if(a==="demo")return startDemo();
+  if(a==="exitdemo"||a==="disconnect")return disconnect();
+  if(a==="close"){S.sel=null;$("#detailCard").hidden=true;renderCal();return}
+  if(a==="add"){const n=$("#addName").value.trim();if(!n)return;const c={name:n,status:"pending",src:"Ajouté à la main"};S.comps.push(c);if(S.mode==="real")resolve(c).then(analyse);else{c.status="notfound";c.err="En démo, seuls les comptes fictifs existent.";renderComps()}return}
+  if(t.dataset.confirm){const c=S.comps[+t.dataset.confirm];c.status="confirmed";renderComps();analyse();return}
+  if(t.dataset.fix){S.comps[+t.dataset.fix].fixing=true;renderComps();return}
+  if(t.dataset.setfix){const i=+t.dataset.setfix,v=$("#fix-"+i).value.trim();if(!v)return;const c=S.comps[i];c.fixing=false;c.A=null;if(S.mode==="real")loadHandle(c,v);return}
+  if(t.dataset.week){S.week=+t.dataset.week;S.sel=null;$("#detailCard").hidden=true;renderCal();return}
+  if(t.dataset.post){S.sel=t.dataset.post;renderCal();showPost(S.sel);return}
+  if(t.dataset.prob){S.sel=t.dataset.prob;renderCal();showProb(S.sel);return}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="tok")connectReal()});
+
+/* ---------- demo data: fictional brands only ---------- */
+const DEMO=(()=>{
+  let seed=7;const r=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const caps={
+    voltway:["Vélotaf en hiver : nos 5 réglages #velotaf #hiver #velo","Black Friday : -20 % sur la gamme urbaine #blackfriday #veloelectrique","Témoignage : Julie roule 12 km par jour #velotaf #lyon","Batterie et froid, ce qu’il faut savoir #veloelectrique #securite","Nouvelle Volt S, plus légère #nouveaute #veloelectrique"],
+    cargo:["Éclairage, épisode 3 : bien se voir la nuit #securite #eclairage #cargo","On sera au salon du cargo à Lyon #salon #velocargo","Transporter deux enfants en sécurité #famille #velocargo #securite","Le cargo électrique en 3 chiffres #velocargo #mobilite","Entretien des freins avant l’hiver #entretien #securite"],
+    me:["Ta chaîne fait ce bruit ? 5 minutes pour la sauver #entretien #velo","Nos clients ont roulé 1 240 km cet hiver #velotaf #clients","Atelier ouvert samedi, café offert #atelier #lyon","Prime vélo 2027 : ce qui change #primevelo #mobilite"]};
+  function acc(name,user,followers,days,hour,fmts,capList,eng){
+    const media=[];for(let i=0;i<60;i++){const d=new Date();d.setDate(d.getDate()-Math.floor(i*7/ days.length)-Math.floor(r()*2));
+      if(!days.includes(d.getDay()))d.setDate(d.getDate()-((d.getDay()-days[i%days.length]+7)%7));
+      d.setHours(hour+(r()<.3?1:0),[0,15,30,45][Math.floor(r()*4)],0,0);
+      const f=fmts[Math.floor(r()*fmts.length)],e=Math.round(eng*(0.5+r()));
+      media.push({caption:capList[Math.floor(r()*capList.length)],timestamp:d.toISOString(),media_type:f==="Carrousel"?"CAROUSEL_ALBUM":f==="Photo"?"IMAGE":"VIDEO",media_product_type:f==="Reel"?"REELS":"FEED",like_count:Math.round(e*.92),comments_count:Math.round(e*.08),permalink:"demo:"+user+i})}
+    media.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+    return{username:user,name,followers_count:followers,media_count:400+Math.floor(r()*600),profile_picture_url:"demo:",media:{data:media}};
+  }
+  return{
+    me:{username:"kiwicycles",name:"Kiwi Cycles",acc:acc("Kiwi Cycles","kiwicycles",8200,[1,3],18,["Photo","Reel","Carrousel"],caps.me,260)},
+    comps:[{name:"Voltway",src:"Listening Agorapulse",status:"deduced",handle:"voltway.bikes",acc:acc("Voltway","voltway.bikes",24100,[2,4,5],12,["Reel","Reel","Carrousel"],caps.voltway,820)},
+           {name:"Cargo&Co",src:"Listening Agorapulse",status:"deduced",handle:"cargoandco",acc:acc("Cargo&Co","cargoandco",11800,[3,6],18,["Carrousel","Photo"],caps.cargo,310)}]};
+})();
+
+renderConnect();
+if(S.token)startReal();
+</script>
+</body>
+</html>
